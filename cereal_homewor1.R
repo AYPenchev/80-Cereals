@@ -2,8 +2,6 @@
 # Georgi Burgazliev, fn: 71781, IS, group 1
 # Simeon Yachev, fn: 71824, IS, group 1
 
-install.packages("UsingR", dependencies = TRUE)
-
 library(UsingR)
 
 #makes sure the file is in the working directory
@@ -36,7 +34,6 @@ attach(cereal.dataset.sample)
 cereal.dataset.sample = cereal.dataset.sample[complete.cases(cereal.dataset.sample), ]
 cereal.dataset.sample = cereal.dataset.sample[fat>=0 & calories >=0 & sodium >=0 & carbo>=0
                                               & fiber>=0 & sugars >=0 & potass>=0 ,]
-
 #Categorical data (quality) - name, mfr, type , shelf
 #Numerical data (quantity)       
 #calories - discrete
@@ -86,7 +83,6 @@ barplot(table(type ,mfr),col = c("navy","purple"),main = "Productions of mfrs",l
 
 #it shows that most of the cereals are rated between 35-40 % and less after 60 %
 #the probability of the cereal to be 30-40  rated is high and above 60 - less
-#rating - normal distribution
 hist(rating,probability = TRUE )
 lines(density(rating),col="red")
 rug(jitter(rating))
@@ -101,15 +97,6 @@ plot(cereal.dataset.sample)
 
 #low sugar cereals are highly rated
 plot(sugars,rating)
-#the cereals with the greatest rating (light blue) have the lowest sugar and calorie content!!
-library(ggplot2)
-ggplot(data=cereal.dataset.sample,aes(x=sugars,y=calories,col=rating))+
-  geom_jitter(data=cereal.dataset.sample, aes(sugars,calories,col=rating))+
-  labs(x="Sugar",y="Calories")+
-  geom_smooth(method="lm",se=FALSE,col='black')+
-  theme_bw()
-
-
 #regression line 2way
 simple.lm(sugars,rating)
 abline(lm(rating~sugars))
@@ -119,6 +106,13 @@ cor(sugars,rating)
 #find index of the closest (x, y) coordinates to the mouse click
 identify(sugars,rating,n=2)
 
+#the cereals with the greatest rating (light blue) have the lowest sugar and calorie content!!
+library(ggplot2)
+ggplot(data=cereal.dataset.sample,aes(x=sugars,y=calories,col=rating))+
+  geom_jitter(data=cereal.dataset.sample, aes(sugars,calories,col=rating))+
+  labs(x="Sugar",y="Calories")+
+  geom_smooth(method="lm",se=FALSE,col='black')+
+  theme_bw()
 
 #numeric to categorical for calories
 calories.categories = cut(calories,breaks = c(min(calories)-1,quantile(calories,.25),
@@ -140,14 +134,14 @@ barplot(table(calories.categories,carbo.categories),col = c("red","green","blue"
 
 #plot both a histogram and a boxplot to show the relationship between the two graphs
 simple.hist.and.boxplot(sodium)
-boxplot(scale(sugars),scale(carbo))
-
-# compares densities by creating violin plots. These are similar to boxplots, 
-# only instead of a box, the density is drawn with it’s mirror image.
-simple.violinplot(scale(protein),scale(fat))
-
-#binomial distribution , the probabilty to select half of the low in calories cereals
-dbinom(25,50,0.42)
+boxplot(scale(sugars),scale(carbo)) --
+  
+  # compares densities by creating violin plots. These are similar to boxplots, 
+  # only instead of a box, the density is drawn with it’s mirror image.
+  simple.violinplot(scale(protein),scale(fat)) --
+  
+  #binomial distribution , the probabilty to select half of the low in calories cereals
+  dbinom(25,50,0.42)
 
 #normal distribution , the percentage of cereals that contains more than 100cal)
 pnorm(100, mean(calories), sd(calories), lower.tail=FALSE) 
@@ -157,12 +151,12 @@ library(logspline)
 install.packages("logspline")
 install.packages("fitdistrplus")
 
-#use the function descdist to gain some ideas about possible candidate distributions.
+#use the functiondescdist to gain some ideas about possible candidate distributions.
 descdist(potass, discrete = TRUE)
 #comparisson
 fit.nbinom = fitdist(potass, "nbinom")
-plot(fit.nbinom)
 fit.pois = fitdist(potass, "pois")
+plot(fit.nbinom)
 plot(fit.pois)
 #potass is more likely to be negative binom
 hist(potass,probability = TRUE)
@@ -287,7 +281,7 @@ segments(x0=fat.values,x1=fat.values, y0= cis[,1],y1 =cis[,2],
 #The p-value reports how likely we are to see this data
 
 #the manufacturers claims that the mean carbos of a cereal are more than 15
-#In a sample of 50 cereals, it was found that they have 14.51 hours on average.
+#In a sample of 50 cereals, it was found that they have 14.51 on average.
 #Assume the population standard deviation is 3.9. At .05 significance level, 
 #can we reject the claim by the manufacturers?
 carbo.mean = mean(carbo) 
@@ -301,7 +295,7 @@ z = (carbo.mean - mu0)/(carbo.sd/sqrt(carbo.length))
 #we do not reject the null hypothesis that ?? ??? 30.
 pnorm(z) > 0.05
 
-#Manifacturars claims that there are at most 100 calories/100 gr in a cereal. 
+#Manifacturars claims that there are at most 100 calories per serving in a cereal. 
 #In a sample of 50 cereals, it is found that the mean amount of calories in a cereal
 #is 107.2 cals. Assume that the population standard deviation is 21.76 grams. 
 #At .05 significance level, can we reject the claim by the mfrs?
